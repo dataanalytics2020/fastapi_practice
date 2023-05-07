@@ -23,7 +23,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-
 # @app.get("/{serch_date}-{serch_tenpo_name}-data/",response_class=HTMLResponse)
 # async def search_google(serch_tenpo_name,serch_date, request: Request):
 #     return scraper.google_search(serch_tenpo_name,serch_date,request)

@@ -17,6 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from datetime import date, timedelta
 
+
 app = FastAPI()
 scraper = Scraper()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -87,10 +88,12 @@ async def search_google(serch_tenpo_name,target_n_day,n_times, request: Request)
         concat_df_list.append(df)
 
     concat_df = pd.concat(concat_df_list,axis=0)
+    print(concat_df)
+    concat_df = concat_df.drop(['合成確率','BB確率','RB確率','ART確率', '店舗名'],axis=1)
     concat_df = concat_df.groupby(['日付','機種名']).mean().sort_values('差枚',ascending=False)
-    concat_df = concat_df[['G数','差枚']]
-    concat_df['差枚'] =concat_df['差枚'].astype(int)
+    #concat_df = concat_df[['G数','差枚']]
     concat_df['G数'] =concat_df['G数'].astype(int)
+    concat_df['差枚'] =concat_df['差枚'].astype(int)
     concat_df = concat_df.reset_index()
     concat_df_html = concat_df.to_html(index=False)
      
@@ -108,3 +111,8 @@ def get_product(request: Request):
 @app.get("/hello/", response_class=HTMLResponse)
 async def hello(request: Request):
    return templates.TemplateResponse("hello.html", {"request": request})
+
+
+@app.get("/items/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: str):
+    return templates.TemplateResponse("item.html", {"request": request, "id": id})
